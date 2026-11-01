@@ -32,6 +32,7 @@ public class Main {
         System.out.println("Всего посетителей: " + visitors.size());
         printUniqueBooks(visitors);
         printSortedBooks(visitors);
+        checkForAuthor(visitors);
     }
 
     private static List<Visitor> readVisitors(String fileName) {
@@ -67,5 +68,19 @@ public class Main {
                 .sorted(Comparator.comparingInt(Book::getPublishingYear)) // сортируем по году
                 .distinct() // убираем дубликаты
                 .forEach(b -> System.out.println(b.getPublishingYear() + " - " + b.getName() + " (" + b.getAuthor() + ")"));
+    }
+
+    private static void checkForAuthor(List<Visitor> visitors) {
+        System.out.println("\n----- Задание № 4. Поиск автора -----");
+
+        boolean hasAuthor = visitors.stream()
+                .flatMap(v -> v.getFavoriteBooks().stream())
+                .anyMatch(b -> b.getAuthor().equalsIgnoreCase("Jane Austen"));
+        // anyMatch проверяет, есть ли хоть одна подходящая
+        if (hasAuthor) {
+            System.out.println("Да, у кого-то из посетителей есть книга Jane Austen.");
+        } else {
+            System.out.println("Нет, книги Jane Austen у посетителей нет.");
+        }
     }
 }

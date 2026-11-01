@@ -33,6 +33,7 @@ public class Main {
         printUniqueBooks(visitors);
         printSortedBooks(visitors);
         checkForAuthor(visitors);
+        printMaxBooks(visitors);
     }
 
     private static List<Visitor> readVisitors(String fileName) {
@@ -82,5 +83,17 @@ public class Main {
         } else {
             System.out.println("Нет, книги Jane Austen у посетителей нет.");
         }
+    }
+
+    private static void printMaxBooks(List<Visitor> visitors) {
+        System.out.println("\n----- Задание № 5. Максимальное число книг -----");
+
+        // mapToInt превращает посетителя в размер его списка книг
+        int maxBooks = visitors.stream()
+                .mapToInt(v -> v.getFavoriteBooks().size())
+                .max() // max() ищет самое большое число
+                .orElse(0); // orElse(0) вернет 0, если список посетителей пуст
+
+        System.out.println("Максимальное число книг у одного посетителя: " + maxBooks);
     }
 }

@@ -1,11 +1,13 @@
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import models.Visitor;
+import models.Book;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -27,6 +29,7 @@ public class Main {
         // каждый элемент потока и преобразует его в другой объект
 
         System.out.println("Всего посетителей: " + visitors.size());
+        printUniqueBooks(visitors);
     }
 
     private static List<Visitor> readVisitors(String fileName) {
@@ -38,5 +41,19 @@ public class Main {
             System.err.println("Ошибка чтения файла: " + e.getMessage());
             return null;
         }
+    }
+
+    private static void printUniqueBooks(List<Visitor> visitors) {
+        System.out.println("\n----- Задание № 2. Книги без повторений -----");
+
+        List<Book> uniqueBooks = visitors.stream()
+                .flatMap(v -> v.getFavoriteBooks().stream()) // flatMap собирает все списки книг в один общий поток
+                .distinct().collect(Collectors.toList()); // distinct убирает дубликаты
+        // collect собирает в список
+
+        // выводим список книг
+        uniqueBooks.forEach(b -> System.out.println(b.getName() + " - " + b.getAuthor()));
+
+        System.out.println("Уникальных книг: " + uniqueBooks.size());
     }
 }

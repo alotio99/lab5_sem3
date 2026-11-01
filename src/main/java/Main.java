@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Comparator;
 
 public class Main {
 
@@ -30,6 +31,7 @@ public class Main {
 
         System.out.println("Всего посетителей: " + visitors.size());
         printUniqueBooks(visitors);
+        printSortedBooks(visitors);
     }
 
     private static List<Visitor> readVisitors(String fileName) {
@@ -55,5 +57,15 @@ public class Main {
         uniqueBooks.forEach(b -> System.out.println(b.getName() + " - " + b.getAuthor()));
 
         System.out.println("Уникальных книг: " + uniqueBooks.size());
+    }
+
+    private static void printSortedBooks(List<Visitor> visitors) {
+        System.out.println("\n----- Задание № 3. Сортировка книг по году -----");
+
+        visitors.stream()
+                .flatMap(v -> v.getFavoriteBooks().stream()) // достаем все книги в один поток
+                .sorted(Comparator.comparingInt(Book::getPublishingYear)) // сортируем по году
+                .distinct() // убираем дубликаты
+                .forEach(b -> System.out.println(b.getPublishingYear() + " - " + b.getName() + " (" + b.getAuthor() + ")"));
     }
 }

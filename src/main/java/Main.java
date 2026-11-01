@@ -2,6 +2,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import models.Visitor;
 import models.Book;
+import models.SmsMessage;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -34,6 +35,7 @@ public class Main {
         printSortedBooks(visitors);
         checkForAuthor(visitors);
         printMaxBooks(visitors);
+        printSmsMessages(visitors);
     }
 
     private static List<Visitor> readVisitors(String fileName) {
@@ -95,5 +97,39 @@ public class Main {
                 .orElse(0); // orElse(0) вернет 0, если список посетителей пуст
 
         System.out.println("Максимальное число книг у одного посетителя: " + maxBooks);
+    }
+
+    private static void printSmsMessages(List<Visitor> visitors) {
+        System.out.println("\n----- Задание № 6. Сообщения подписчикам -----");
+
+        // среднее арифметическое по всем посетителям
+        double average = visitors.stream()
+                .mapToInt(v -> v.getFavoriteBooks().size())
+                .average() // считает среднее
+                .orElse(0.0); // среднее 0.0 если список посетителей пуст
+
+        // фильтруем подписчиков и создаем для них SMS
+        List<SmsMessage> messages = visitors.stream()
+                .filter(v -> v.isSubscribed()) // оставляем только subscribed = true
+                .map(v -> {
+                    int count = v.getFavoriteBooks().size(); // узнаем сколько книг
+                    String text;
+
+                    if (count > average) {
+                        text = "you are cool guy";
+                    } else if (count < average) {
+                        text = "you idiot";
+                    } else {
+                        text = "ok";
+                    }
+
+                    // создаем смс с номером телефона посетителя
+                    return new SmsMessage(v.getPhone(), text);
+                })
+                .collect(Collectors.toList()); // собираем в список
+
+        // выводим результат
+        messages.forEach(m -> System.out.println("На номер " + m.getPhoneNumber() + ": " + m.getMessage()));
+        System.out.println("Всего отправлено сообщений: " + messages.size());
     }
 }
